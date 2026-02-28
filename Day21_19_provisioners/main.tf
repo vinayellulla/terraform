@@ -77,16 +77,50 @@ resource "aws_instance" "demo" {
   #   ]
   # }
 
-  provisioner "file" {
-    source      = "${path.module}/scripts/welcome.sh"
-    destination = "/tmp/welcome.sh"
+  # provisioner "file" {
+  #   source      = "${path.module}/scripts/welcome.sh"
+  #   destination = "/tmp/welcome.sh"
+  # }
+
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "sudo chmod +x /tmp/welcome.sh",
+  #     "sudo /tmp/welcome.sh"
+  #   ]
+  # }
+
+
+}
+
+resource "null_resource" "rerun" {
+
+  triggers = {
+    always_run = timestamp()
   }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file(var.private_key_path)
+    host        = aws_instance.demo.public_ip
+  }
+
+  # provisioner "file" {
+  #   source      = "${path.module}/scripts/welcome.sh"
+  #   destination = "/tmp/welcome.sh"
+  # }
+
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "sudo chmod +x /tmp/welcome.sh",
+  #     "sudo /tmp/welcome.sh"
+  #   ]
+  # }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod +x /tmp/welcome.sh",
-      "sudo /tmp/welcome.sh"
+      "sudo apt-get udate",
+      "echo 'Hello from remote-exec which is done by vinay using null resource' | sudo tee /tmp/remote_exec.txt"
     ]
   }
 }
-

@@ -11,3 +11,6 @@ terraform.tfvars
 # OS files
 .DS_Store
 Thumbs.db
+
+# pem files
+*.pem
